@@ -1,0 +1,33 @@
+{
+    "name": "runspa",
+    "version": "1.0.0",
+    "description": "A simple jQuery Single Page Application Plugin",
+    "main": "dist/runspa.js",
+    "keywords": [
+      "jquery-plugin",
+      "ecosystem:jquery",
+      "SPA",
+      "Single",
+      "Page",
+      "Application",
+      "JQuery"
+    ],
+    "author": "Carlos Júnior <carlosrfjunior@gmail.com> (http://www.lanx.com.br)",
+    "license": "MIT",
+    "homepage": "https://github.com/carlosrfjunior/runspa#readme",
+    "ignore": [
+        ".jshintrc", "**/*.txt",
+        "**/.*",
+        "node_modules",
+        "build",
+        "docs",
+        "examples",
+        "test",
+        "postcss.config.json",
+        "rollup.config.js",
+    ],
+    "dependencies": {
+    },
+    "devDependencies": {
+    }
+}

@@ -1,0 +1,43 @@
+{
+  "name": "runspa",
+  "version": "1.0.0",
+  "description": "A simple jQuery Single Page Application Plugin",
+  "main": "dist/runspa.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlosrfjunior/runspa.git"
+  },
+  "keywords": [
+    "jquery-plugin",
+    "ecosystem:jquery",
+    "SPA",
+    "Single",
+    "Page",
+    "Application",
+    "JQuery"
+  ],
+  "author": "Carlos Júnior <carlosrfjunior@gmail.com> (http://www.lanx.com.br)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/carlosrfjunior/runspa/issues"
+  },
+  "homepage": "https://github.com/carlosrfjunior/runspa#readme",
+  "scripts": {
+    "build:css": "postcss -c postcss.config.json",
+    "build:js": "rollup -c",
+    "build": "npm run build:css && npm run build:js",
+    "compress:css": "postcss -u cssnano dist/runspa.css -o dist/runspa.min.css",
+    "compress:js": "uglifyjs dist/runspa.js -o dist/runspa.min.js -c -m --comments /^!/ && cpx dist/runspa.min.js examples/js/",
+    "compress": "npm run compress:css && npm run compress:js",
+    "watch:css": "postcss -c postcss.config.json -w",
+    "watch:js": "rollup -c -w -m",
+    "lint": "eslint src/js",
+    "postbuild": "npm run compress && node build",
+    "prebuild": "npm run lint && npm test",
+    "start": "npm-run-all --parallel watch:*",
+    "test": "node-qunit-phantomjs test/index.html"
+},
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
+}
