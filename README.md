@@ -4,6 +4,7 @@
 
 - [Website](http://www.lanx.com.br)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 
@@ -76,5 +77,7 @@ Include files:
 
 
 [⬆ back to top](#table-of-contents)
+=======
+>>>>>>> 1f1b88bc855cc1b4f8aae1eb346bf1568a7f9329
 =======
 >>>>>>> 1f1b88bc855cc1b4f8aae1eb346bf1568a7f9329
