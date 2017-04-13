@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+    // General Definitions
     $.runspa({
         id: '#pageContent',
         prefix: '/templates/',
@@ -9,8 +10,17 @@ $(document).ready(function () {
         cache: false
     });
 
+   /************************
+    * Test Routes
+    *************************/
+   
+    // Home Page
     $.runspa.route('home', {
         title: 'Home Page',
+        metaTag: {
+            'keywords' : 'jquery-plugin, ecosystem:jquery, SPA, Single, Page, Application, JQuery',
+            'description': 'A simple jQuery Single Page Application Plugin'
+        },
         css: {
             'css01': {url: 'css/app01.css'},
             'css02': {url: 'css/app02.css'}
@@ -19,22 +29,28 @@ $(document).ready(function () {
             'js01': {url: 'js/load01.js', async: false},
             'js02': {url: 'js/load02.js', async: true}
         }
-    }, function (e) {
+    }, function (page) {
         configNav();
     });
 
+    // About Page
     $.runspa.route('about', {
-        title: 'About Page'
-    }, function (e) {
-        configNav();    
+        'title' : 'Page About'
+    }, function (page) {
+        
+        page.done(function(e){
+            alert('Load Ok');
+            configNav();    
+        });
+
     });
 
-    $.runspa.route('login', {
-        title: 'Login Page'
-    }, function (e) {
-        configNav();    
-    });
+    // Login Page
+    $.runspa.route('login');
     
+    /**
+     * Function Active actual button for test
+     */
     function configNav(){
         var hash = window.location.hash.replace(/^#/, '');
         $( "li.active" ).removeClass();
