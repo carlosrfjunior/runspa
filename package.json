@@ -36,8 +36,12 @@
     "prebuild": "npm run lint && npm test",
     "start": "npm-run-all --parallel watch:*",
     "test": "node-qunit-phantomjs test/index.html"
-},
+  },
   "dependencies": {
     "jquery": "^3.2.1"
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
   }
 }

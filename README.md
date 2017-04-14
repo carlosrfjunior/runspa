@@ -53,8 +53,8 @@ Three quick start options are available:
 
 - [Download the latest release](https://github.com/carlosrfjunior/runspa/archive/master.zip).
 - Clone the repository: `git clone https://github.com/carlosrfjunior/runspa.git`.
-- Install with [NPM](http://npmjs.org): `npm install carlosrfjunior/runspa`.
-- Install with [Bower](http://bower.io): `bower install carlosrfjunior/runspa`.
+- Install with [NPM](http://npmjs.org): `npm install runspa`.
+- Install with [Bower](http://bower.io): `bower install runspa`.
 
 
 ### Installation
