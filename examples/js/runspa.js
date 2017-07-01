@@ -47,16 +47,19 @@
     }
 
     var PageSetup = {
-        load: function (url, options) {
+        load: function ($hash, options) {
 
             var $mainContent = $(options.id);
+			var url = window.location.protocol + '//' + 
+			          window.location.host + 
+					  window.location.pathname;
             
-            window.location.hash = url;
+            window.location.hash = $hash;
             
             if (options.prefix !== undefined) {
-                url = window.location.hash.replace(/^#/, options.prefix);
+                url += window.location.hash.replace(/^#/, options.prefix);
             } else {
-                url = window.location.hash.replace(/^#/, '');
+                url += window.location.hash.replace(/^#/, '');
             }
 
             if (options.extension !== undefined)
