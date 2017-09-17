@@ -81,8 +81,20 @@
                     PageSetup.js(options.scripts, options);
 
                 },
-                error: function () {
-                    window.location.href = options.pageError;
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (options.pageError !== undefined && options.pageError.length > 0) {
+                        window.location.href = options.pageError;
+                    } else {
+
+                        // Change page title
+                        document.title = (options.title || document.title);
+
+                        $('html, body').animate({scrollTop: 0}, 0).fadeIn('slow');
+
+                        $mainContent.html(textStatus);
+                        $mainContent.delay(250).animate({opacity: 1}, 0);
+
+                    }
                 }
 
             }).done(function(){
@@ -199,13 +211,33 @@
 
             var page = window.location.hash.replace(/^#/, '');
             var $obj;
+            var $pageSpa;
 
             if (options.defaultPage !== undefined && page.length < 1) {
-                $obj = $(target.replace('{p}', options.defaultPage));
+                $obj = $(target.replace('{p}', '"' + options.defaultPage + '"'));
+                
+                $pageSpa = options.defaultPage;
+                
             } else {
-
-                if(page !== $route) return false;
-                    $obj = $(target.replace('{p}', page));
+                
+                $pageSpa = page;
+                
+                if(page !== $route && !options.autoCreateRoute) {
+                    return false;
+                }
+                
+                
+                $obj = $(target.replace('{p}', '"' + page + '"'));
+            }
+            
+            if(PageSetup.isEmpty($obj)){
+                $(options.id).append(
+                        $('<a></a>', {
+                            'href': '#' + $pageSpa,
+                            'data-spa': $pageSpa
+                        })
+                );
+                $obj = $(target.replace('{p}', '"' + options.defaultPage + '"'));
             }
 
             $obj.click();
@@ -285,9 +317,8 @@
 
         }
         
-
         var opts = $.extend(true, {}, $.fn.runspa.defaults, settings, options);
-        var pageClick = target.replace('{p}', $path);
+        var pageClick = target.replace('{p}', '"' + $path + '"');
         var targetClick = target.replace('={p}', '');
         var spaClass = '[data-spa-class="' + opts.id + '"]';
 
@@ -353,7 +384,8 @@
         id: undefined,
         language: 'en',
         defaultPage: undefined,
-        pageError: 'error',
+        pageError: undefined,
+        autoCreateRoute: false,
         method: 'GET',
         cache: false,
         async: false,
