@@ -317,6 +317,16 @@
 
         }
         
+        if(/{?}/i.test($path)){
+             var page = window.location.hash.replace(/^#/, '');
+             var rgx = $path.replace(/{.*}/gi, '');
+             
+             if(page.indexOf(rgx) >= 0){
+                 $path = page;
+             }
+             
+        }
+        
         var opts = $.extend(true, {}, $.fn.runspa.defaults, settings, options);
         var pageClick = target.replace('{p}', '"' + $path + '"');
         var targetClick = target.replace('={p}', '');
