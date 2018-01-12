@@ -14,15 +14,15 @@
 
     "use strict";
     var
-        // Abstracting the HTML and event identifiers for easy rebranding
-        runspa = 'runspa',
-        prefix = '.rspa',
-        prefixCSS = '.rspa_css',
-        prefixJS = '.rspa_js',
-        prefixLoading = '.rspa_loading',
-        target = 'a[data-spa={p}]',
-        RunSPA,
-        settings = {};
+            // Abstracting the HTML and event identifiers for easy rebranding
+            runspa = 'runspa',
+            prefix = '.rspa',
+            prefixCSS = '.rspa_css',
+            prefixJS = '.rspa_js',
+            prefixLoading = '.rspa_loading',
+            target = 'a[data-spa={p}]',
+            RunSPA,
+            settings = {};
 
     // Don't do anything if RunSPA already exists.
     if ($[runspa]) {
@@ -38,12 +38,12 @@
             var $protocol = window.location.protocol + '//';
             var $host = window.location.host;
             var $path = ($pathName.endsWith('/') ? $pathName : ($pathName + '/'));
-	    var url = $protocol + $host + $path;
-            
-            if(settings.id === options.id){
+            var url = $protocol + $host + $path;
+
+            if (settings.id === options.id) {
                 window.location.hash = $hash;
             }
-            
+
             if (options.prefix !== undefined) {
                 url += $hash + '/' + options.prefix;
             } else {
@@ -61,8 +61,8 @@
                 async: options.async,
                 beforeSend: function () {
 
-                      $mainContent.css({opacity: 0});
-                      if(options.loading)
+                    $mainContent.css({opacity: 0});
+                    if (options.loading)
                         PageSetup.addLoading($mainLoading);
 
                 },
@@ -81,28 +81,40 @@
                     PageSetup.js(options.scripts, options);
 
                 },
-                error: function () {
-                    window.location.href = options.pageError;
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (options.pageError !== undefined && options.pageError.length > 0) {
+                        window.location.href = options.pageError;
+                    } else {
+
+                        // Change page title
+                        document.title = (options.title || document.title);
+
+                        $('html, body').animate({scrollTop: 0}, 0).fadeIn('slow');
+
+                        $mainContent.html(textStatus);
+                        $mainContent.delay(250).animate({opacity: 1}, 0);
+
+                    }
                 }
 
-            }).done(function(){
+            }).done(function () {
                 PageSetup.removeLoading();
             });
         },
-        addLoading: function($target){
+        addLoading: function ($target) {
 
             $(prefixLoading).remove();
 
-            var className = prefixLoading.replace('.','');
+            var className = prefixLoading.replace('.', '');
             var opts = $.extend(true, {}, $.fn.runspa.defaults, settings);
 
             $target.before('<div class="' + className +
-                           '"><div style="width: 200px;">' +
-                           '<img src="' + opts.loadingImage +
-                           '" style="height: 50px;width: 50px;"><br>' +
-                           '<h3><span>' + opts.loadingLabel + '</span></h3>'+
-                           '</div></div>'
-                           );
+                    '"><div style="width: 200px;">' +
+                    '<img src="' + opts.loadingImage +
+                    '" style="height: 50px;width: 50px;"><br>' +
+                    '<h3><span>' + opts.loadingLabel + '</span></h3>' +
+                    '</div></div>'
+                    );
 
             $(prefixLoading).css({
                 'position': 'fixed',
@@ -113,16 +125,16 @@
                 'text-align': 'center'
             });
         },
-         removeLoading: function(){
+        removeLoading: function () {
 
             $(prefixLoading).remove();
 
         },
-        js: function(files, options, callback){
+        js: function (files, options, callback) {
 
-           var prefixClass = prefixJS.replace('.', options.id.replace('#','').replace('.', '') + '-');
+            var prefixClass = prefixJS.replace('.', options.id.replace('#', '').replace('.', '') + '-');
 
-           $('.' + prefixClass).remove();
+            $('.' + prefixClass).remove();
 
             $.each(files, function (key, data) {
                 PageSetup._js(data, options, callback);
@@ -130,17 +142,17 @@
 
         },
         css: function (files, options, callback) {
-            
-           var prefixClass = prefixCSS.replace('.', options.id.replace('#','').replace('.', '') + '-');
 
-           $('.' + prefixClass).remove();
+            var prefixClass = prefixCSS.replace('.', options.id.replace('#', '').replace('.', '') + '-');
+
+            $('.' + prefixClass).remove();
 
             $.each(files, function (key, data) {
                 PageSetup._css(data, options, callback);
             });
 
         },
-        metaTag: function (metas, callback){
+        metaTag: function (metas, callback) {
 
             $(prefix).remove();
 
@@ -148,7 +160,7 @@
                 PageSetup._metaTag(key, data, callback);
             });
         },
-        _metaTag: function (key, meta, callback){
+        _metaTag: function (key, meta, callback) {
 
             var head = document.getElementsByTagName('head')[0];
             var title = head.firstChild;
@@ -167,7 +179,7 @@
 
             var body = document.getElementsByTagName('body')[0];
             var script = document.createElement('script');
-            var prefixClass = prefixJS.replace('.', options.id.replace('#','').replace('.', '') + '-');
+            var prefixClass = prefixJS.replace('.', options.id.replace('#', '').replace('.', '') + '-');
 
             script.type = 'text/javascript';
             script.async = file.async || options.async;
@@ -183,7 +195,7 @@
 
             var head = document.getElementsByTagName('head')[0];
             var s = document.createElement('link');
-            var prefixClass = prefixCSS.replace('.', options.id.replace('#','').replace('.', '') + '-');
+            var prefixClass = prefixCSS.replace('.', options.id.replace('#', '').replace('.', '') + '-');
 
             s.setAttribute('rel', 'stylesheet');
             s.setAttribute('type', 'text/css');
@@ -195,17 +207,53 @@
             head.appendChild(s);
 
         },
+        checkPath: function ($path) {
+
+            if ($path !== undefined) {
+                var $xPath = window.location.href.toLowerCase().indexOf($path);
+
+                if ($xPath <= 0) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
         init: function ($route, options) {
 
             var page = window.location.hash.replace(/^#/, '');
             var $obj;
+            var $pageSpa;
+
+            if (!PageSetup.checkPath(options.path)) {
+                return false;
+            }
 
             if (options.defaultPage !== undefined && page.length < 1) {
                 $obj = $(target.replace('{p}', '"' + options.defaultPage + '"'));
+
+                $pageSpa = options.defaultPage;
+
             } else {
 
-                if(page !== $route) return false;
-                    $obj = $(target.replace('{p}', '"' + page + '"'));
+                $pageSpa = page;
+
+                if (page !== $route && !options.autoCreateRoute) {
+                    return false;
+                }
+
+
+                $obj = $(target.replace('{p}', '"' + page + '"'));
+            }
+
+            if (PageSetup.isEmpty($obj)) {
+                $(options.id).append(
+                        $('<a></a>', {
+                            'href': '#' + $pageSpa,
+                            'data-spa': $pageSpa
+                        })
+                        );
+                $obj = $(target.replace('{p}', '"' + options.defaultPage + '"'));
             }
 
             $obj.click();
@@ -276,15 +324,24 @@
         if ($.isFunction(options)) {
             callback = options;
             options = {};
-        }else if (!PageSetup.isEmpty(options)) {
+        } else if (!PageSetup.isEmpty(options)) {
 
-            if(!PageSetup.isJSON(options)){
+            if (!PageSetup.isJSON(options)) {
                 throw new Error("Route [ " + $path + " ] Input Options Invalid!");
                 return false;
             }
 
         }
-        
+
+        if (/{?}/i.test($path)) {
+            var page = window.location.hash.replace(/^#/, '');
+            var rgx = $path.replace(/{.*}/gi, '');
+
+            if (page.indexOf(rgx) >= 0) {
+                $path = page;
+            }
+
+        }
 
         var opts = $.extend(true, {}, $.fn.runspa.defaults, settings, options);
         var pageClick = target.replace('{p}', '"' + $path + '"');
@@ -293,6 +350,10 @@
 
         $(pageClick).attr('data-spa-class', opts.id);
         $(pageClick).unbind();
+
+        if (!PageSetup.checkPath(opts.path)) {
+            return false;
+        }
 
         $(document).on('click', pageClick, function (e) {
             e.preventDefault();
@@ -353,7 +414,8 @@
         id: undefined,
         language: 'en',
         defaultPage: undefined,
-        pageError: 'error',
+        pageError: undefined,
+        autoCreateRoute: false,
         method: 'GET',
         cache: false,
         async: false,
@@ -370,8 +432,8 @@
 
 
     /*  $.fn.runspaLocales.en = {
-
+     
      };
      */
 
-}( jQuery ));
+}(jQuery));

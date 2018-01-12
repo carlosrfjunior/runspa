@@ -1,6 +1,6 @@
 {
   "name": "runspa",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A simple jQuery Single Page Application Plugin",
   "main": "dist/runspa.js",
   "repository": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/carlosrfjunior/runspa#readme",
   "scripts": {
-    "compress:js": "uglifyjs dist/runspa.js -o dist/runspa.min.js -c -m --comments /^!/ && cpx dist/runspa.min.js examples/js/"
+    "compress:js": "uglifyjs dist/runspa.js -o dist/runspa.min.js -c -m --comments /^!/ && cpx dist/* examples/js/"
   },
   "dependencies": {
     "jquery": "^3.2.1",
