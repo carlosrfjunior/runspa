@@ -224,6 +224,7 @@
             var page = window.location.hash.replace(/^#/, '');
             var $obj;
             var $pageSpa;
+//            var $pageCurrent = window.RunSPA.currentPage;
 
             if (!PageSetup.checkPath(options.path)) {
                 return false;
@@ -238,10 +239,9 @@
 
                 $pageSpa = page;
 
-                if (page !== $route && !options.autoCreateRoute) {
+                if (page !== $route || !options.autoCreateRoute) {
                     return false;
                 }
-
 
                 $obj = $(target.replace('{p}', '"' + page + '"'));
             }
@@ -250,10 +250,11 @@
                 $(options.id).append(
                         $('<a></a>', {
                             'href': '#' + $pageSpa,
-                            'data-spa': $pageSpa
+                            'data-spa': $pageSpa,
+                            'css': {display: 'none'}
                         })
                         );
-                $obj = $(target.replace('{p}', '"' + options.defaultPage + '"'));
+                $obj = $(target.replace('{p}', '"' + $pageSpa + '"'));
             }
 
             $obj.click();
