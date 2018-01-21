@@ -59,14 +59,18 @@
                 dataType: options.dataType,
                 cache: options.cache,
                 async: options.async,
-                beforeSend: function () {
+                beforeSend: function (jqXHR, settings) {
 
                     $mainContent.css({opacity: 0});
                     if (options.loading)
                         PageSetup.addLoading($mainLoading);
 
+                    if ($.isFunction(options.beforeSend)) {
+                        options.beforeSend(jqXHR, settings);
+                    }
+
                 },
-                success: function (data) {
+                success: function (data, textStatus, jqXHR) {
 
                     // Change page title
                     document.title = (options.title || document.title);
@@ -80,8 +84,17 @@
                     PageSetup.css(options.css, options);
                     PageSetup.js(options.scripts, options);
 
+                    if ($.isFunction(options.success)) {
+                        options.success(data, textStatus, jqXHR);
+                    }
+
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
+
+                    if ($.isFunction(options.error)) {
+                        options.error(jqXHR, textStatus, errorThrown);
+                    }
+
                     if (options.pageError !== undefined && options.pageError.length > 0) {
                         window.location.href = options.pageError;
                     } else {
@@ -93,6 +106,8 @@
 
                         $mainContent.html(textStatus);
                         $mainContent.delay(250).animate({opacity: 1}, 0);
+
+
 
                     }
                 }
@@ -219,12 +234,43 @@
 
             return true;
         },
-        init: function ($route, options) {
+        /**
+         * 
+         * @param String pageClick
+         * @param String targetClick
+         * @param JSOJ opts
+         * @returns void
+         */
+        click: function (pageClick, targetClick, opts, callback) {
+            
+//             $(pageClick).unbind('click');
+//             $(pageClick).off('click');
+
+            $(pageClick).unbind('click').off('click').on('click', function (e) {
+                e.preventDefault();
+
+                var spaClass = '[data-spa-class="' + opts.id + '"]';
+
+                $(targetClick + spaClass).parents('li').removeClass(opts.classActive);
+                $(this).closest('li').addClass(opts.classActive);
+
+                $(targetClick + spaClass).removeClass(opts.classActive);
+                $(this).addClass(opts.classActive);
+
+                var load = PageSetup.load($(this).data('spa'), opts);
+
+                if ($.isFunction(callback)) {
+                    callback(load);
+                }
+
+            });
+
+        },
+        init: function ($route, options, callback) {
 
             var page = window.location.hash.replace(/^#/, '');
             var $obj;
             var $pageSpa;
-//            var $pageCurrent = window.RunSPA.currentPage;
 
             if (!PageSetup.checkPath(options.path)) {
                 return false;
@@ -239,14 +285,30 @@
 
                 $pageSpa = page;
 
-                if (page !== $route || !options.autoCreateRoute) {
+                if ($route.indexOf('{page?}') > 0) {
+
+                    var rgx = $route.replace('/', '\/').replace('{page?}', '(.*)');
+
+                    if ($pageSpa.match(rgx)) {
+                        $route = $pageSpa;
+                    } else {
+                        return false;
+                    }
+
+                    $route = $route.replace('{page?}', '0');
+
+                }
+
+                if (page !== $route && options.autoCreateRoute === false) {
                     return false;
                 }
 
                 $obj = $(target.replace('{p}', '"' + page + '"'));
+
             }
 
             if (PageSetup.isEmpty($obj)) {
+
                 $(options.id).append(
                         $('<a></a>', {
                             'href': '#' + $pageSpa,
@@ -254,7 +316,14 @@
                             'css': {display: 'none'}
                         })
                         );
-                $obj = $(target.replace('{p}', '"' + $pageSpa + '"'));
+
+                var $pageClick = target.replace('{p}', '"' + $pageSpa + '"');
+                var $targetClick = target.replace('={p}', '');
+
+                $obj = $($pageClick);
+
+                PageSetup.click($pageClick, $targetClick, options, callback);
+
             }
 
             $obj.click();
@@ -334,46 +403,52 @@
 
         }
 
-        if (/{?}/i.test($path)) {
-            var page = window.location.hash.replace(/^#/, '');
-            var rgx = $path.replace(/{.*}/gi, '');
+        var opts = $.extend(true, {}, $.fn.runspa.defaults, settings, options);
+        var pageSPA = [];
+        var targetClick = target.replace('={p}', '');
 
-            if (page.indexOf(rgx) >= 0) {
-                $path = page;
-            }
+        /**
+         * Smart Tag {page?}
+         */
+        if ($path.indexOf('{page?}') > 0) {
+            var rgx = $path.replace('/', '\/').replace('{page?}', '(.*)');
 
+            $(targetClick).filter(function () {
+                return $(this).data('spa').match(rgx);
+            }).each(function () {
+//                if (pageClick.length > 0) {
+//                    //pageClick += ',' + target.replace('{p}', '"' + $(this).data('spa') + '"');
+//                    pageSPA.push(target.replace('{p}', '"' + $(this).data('spa') + '"'));
+//                } else {
+                //pageClick = target.replace('{p}', '"' + $(this).data('spa') + '"');
+                pageSPA.push(target.replace('{p}', '"' + $(this).data('spa') + '"'));
+//            }
+            });
+
+        } else {
+//            pageClick = target.replace('{p}', '"' + $path + '"');
+            pageSPA.push(target.replace('{p}', '"' + $path + '"'));
         }
 
-        var opts = $.extend(true, {}, $.fn.runspa.defaults, settings, options);
-        var pageClick = target.replace('{p}', '"' + $path + '"');
-        var targetClick = target.replace('={p}', '');
-        var spaClass = '[data-spa-class="' + opts.id + '"]';
-
-        $(pageClick).attr('data-spa-class', opts.id);
-        $(pageClick).unbind();
+//        $(pageClick).attr('data-spa-class', opts.id);
+//        $(pageClick).unbind();
 
         if (!PageSetup.checkPath(opts.path)) {
             return false;
         }
 
-        $(document).on('click', pageClick, function (e) {
-            e.preventDefault();
+        if (pageSPA.length > 0) {
 
-            $(targetClick + spaClass).parents('li').removeClass(opts.classActive);
-            $(this).closest('li').addClass(opts.classActive);
+            pageSPA.forEach(function (item, index, array) {
 
-            $(targetClick + spaClass).removeClass(opts.classActive);
-            $(this).addClass(opts.classActive);
+                $(item).attr('data-spa-class', opts.id);                
+                PageSetup.click(item, targetClick, opts, callback);
 
-            var load = PageSetup.load($path, opts);
+            });
 
-            if ($.isFunction(callback)) {
-                callback(load);
-            }
+        }
 
-        });
-
-        PageSetup.init($path, opts);
+        PageSetup.init($path, opts, callback);
 
     };
 
@@ -425,6 +500,9 @@
         extension: undefined,
         prefix: undefined,
         classActive: 'active',
+        success: undefined,
+        beforeSend: undefined,
+        error: undefined,
         loading: true,
         loadingClass: undefined,
         loadingLabel: 'Loading...',
