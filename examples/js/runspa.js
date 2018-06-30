@@ -1,5 +1,5 @@
 /*!
- * RunSPA v1.1.1-rc
+ * RunSPA v1.1.3-rc
  * https://github.com/carlosrfjunior/runspa
  *
  * Author: Carlos R F Júnior
@@ -13,6 +13,9 @@
 (function ($) {
 
     "use strict";
+    
+    var typeRef = {'CLICK': 1, 'LOAD': 2};
+    
     var
             // Abstracting the HTML and event identifiers for easy rebranding
             runspa = 'runspa',
@@ -22,6 +25,7 @@
             prefixLoading = '.rspa_loading',
             target = 'a[data-spa={p}]',
             RunSPA,
+            referrer = typeRef.LOAD,
             settings = {};
 
     // Don't do anything if RunSPA already exists.
@@ -30,6 +34,21 @@
     }
 
     var PageSetup = {
+        
+        /**
+         * Define estado atual
+         * 
+         * @param {typeRef} $status {'CLICK': 1, 'LOAD': 2}
+         * @returns {runspaL#13.PageSetup.referrer}
+         */
+        referrer: function($status){
+            
+            if($status !== undefined){
+                referrer = $status;
+            }
+            
+            return referrer;
+        },
         load: function ($hash, options) {
 
             var $mainContent = $(options.id);
@@ -236,18 +255,18 @@
         },
         /**
          * 
-         * @param String pageClick
-         * @param String targetClick
-         * @param JSOJ opts
+         * @param {string} pageClick
+         * @param {tring} targetClick
+         * @param {JSON} opts
+         * @param {function} callback
          * @returns void
          */
         click: function (pageClick, targetClick, opts, callback) {
-            
-//             $(pageClick).unbind('click');
-//             $(pageClick).off('click');
 
             $(pageClick).unbind('click').off('click').on('click', function (e) {
                 e.preventDefault();
+                
+                PageSetup.referrer(typeRef.CLICK);
 
                 var spaClass = '[data-spa-class="' + opts.id + '"]';
 
@@ -307,7 +326,7 @@
 
             }
 
-            if (PageSetup.isEmpty($obj)) {
+            if (PageSetup.isEmpty($obj) && PageSetup.referrer() === typeRef.LOAD) {
 
                 $(options.id).append(
                         $('<a></a>', {
@@ -372,13 +391,25 @@
     $(window).on('hashchange', function (e) {
         e.preventDefault();
     });
-
+//
+//    $(window).on('unload', function (e) {
+//        e.preventDefault();
+//        console.log('Teste Ok Unload');
+//    });
+//
+//    // alternative to DOMContentLoaded
+//    document.onreadystatechange = function () {
+//        if (document.readyState === "interactive") {
+//            console.log('Teste interactive');
+//        }
+//    };
+    
     /**
      * Defined routes for Application
      *
-     * @param string    $path
-     * @param JSON      options     OPTIONAL: Defined parameters in the application load
-     * @param function  callback    OPTIONAL: Return functions of the $.ajax after process
+     * @param {string}    $path
+     * @param {JSON}      options     OPTIONAL: Defined parameters in the application load
+     * @param {function}  callback    OPTIONAL: Return functions of the $.ajax after process
      * @example         $.runspa.route(name)
      * @example         $.runspa.route(name, [function])
      * @example         $.runspa.route(name, [options, function])
@@ -441,7 +472,7 @@
 
             pageSPA.forEach(function (item, index, array) {
 
-                $(item).attr('data-spa-class', opts.id);                
+                $(item).attr('data-spa-class', opts.id);
                 PageSetup.click(item, targetClick, opts, callback);
 
             });
@@ -455,9 +486,9 @@
     /**
      * Defined routes for Application
      *
-     * @param string    $path
-     * @param JSON      options     OPTIONAL: Defined parameters in the application load
-     * @param function  callback    OPTIONAL: Return functions of the $.ajax after process
+     * @param {string}    $path
+     * @param {JSON}      options     OPTIONAL: Defined parameters in the application load
+     * @param {function}  callback    OPTIONAL: Return functions of the $.ajax after process
      * @example         $.runspa.get(name)
      * @example         $.runspa.get(name, [function])
      * @example         $.runspa.get(name, [options, function])
