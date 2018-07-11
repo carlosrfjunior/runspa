@@ -1,6 +1,6 @@
 {
   "name": "runspa",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "A simple jQuery Single Page Application Plugin",
   "main": "dist/runspa.js",
   "repository": {

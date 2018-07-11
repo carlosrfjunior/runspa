@@ -1,5 +1,5 @@
 /*!
- * RunSPA v1.1.3
+ * RunSPA v1.1.1-rc
  * https://github.com/carlosrfjunior/runspa
  *
  * Author: Carlos R F Júnior
@@ -15,6 +15,7 @@
     "use strict";
     
     var typeRef = {'CLICK': 1, 'LOAD': 2};
+    var typeFile = {'JS': 1, 'CSS': 2};
     
     var
             // Abstracting the HTML and event identifiers for easy rebranding
@@ -164,11 +165,28 @@
             $(prefixLoading).remove();
 
         },
-        js: function (files, options, callback) {
+        removeAllFiles: function ($tagName, options) {
+            
+            if(options.inject){
+                return false;
+            }
 
-            var prefixClass = prefixJS.replace('.', options.id.replace('#', '').replace('.', '') + '-');
+            var prefixClass;
+
+            if (!options.inject && $tagName === typeFile.JS) {
+                prefixClass = prefixJS.replace('.', options.id.replace('#', '').replace('.', '') + '-');
+            }
+
+            if (!options.inject && $tagName === typeFile.CSS) {
+                prefixClass = prefixCSS.replace('.', options.id.replace('#', '').replace('.', '') + '-');
+            }
 
             $('.' + prefixClass).remove();
+
+        },
+        js: function (files, options, callback) {
+            
+            PageSetup.removeAllFiles(typeFile.JS, options);
 
             $.each(files, function (key, data) {
                 PageSetup._js(data, options, callback);
@@ -177,9 +195,7 @@
         },
         css: function (files, options, callback) {
 
-            var prefixClass = prefixCSS.replace('.', options.id.replace('#', '').replace('.', '') + '-');
-
-            $('.' + prefixClass).remove();
+            PageSetup.removeAllFiles(typeFile.CSS, options);
 
             $.each(files, function (key, data) {
                 PageSetup._css(data, options, callback);
@@ -391,18 +407,6 @@
     $(window).on('hashchange', function (e) {
         e.preventDefault();
     });
-//
-//    $(window).on('unload', function (e) {
-//        e.preventDefault();
-//        console.log('Teste Ok Unload');
-//    });
-//
-//    // alternative to DOMContentLoaded
-//    document.onreadystatechange = function () {
-//        if (document.readyState === "interactive") {
-//            console.log('Teste interactive');
-//        }
-//    };
     
     /**
      * Defined routes for Application
@@ -447,22 +451,13 @@
             $(targetClick).filter(function () {
                 return $(this).data('spa').match(rgx);
             }).each(function () {
-//                if (pageClick.length > 0) {
-//                    //pageClick += ',' + target.replace('{p}', '"' + $(this).data('spa') + '"');
-//                    pageSPA.push(target.replace('{p}', '"' + $(this).data('spa') + '"'));
-//                } else {
-                //pageClick = target.replace('{p}', '"' + $(this).data('spa') + '"');
                 pageSPA.push(target.replace('{p}', '"' + $(this).data('spa') + '"'));
-//            }
             });
 
         } else {
-//            pageClick = target.replace('{p}', '"' + $path + '"');
+
             pageSPA.push(target.replace('{p}', '"' + $path + '"'));
         }
-
-//        $(pageClick).attr('data-spa-class', opts.id);
-//        $(pageClick).unbind();
 
         if (!PageSetup.checkPath(opts.path)) {
             return false;
@@ -471,10 +466,8 @@
         if (pageSPA.length > 0) {
 
             pageSPA.forEach(function (item, index, array) {
-
                 $(item).attr('data-spa-class', opts.id);
                 PageSetup.click(item, targetClick, opts, callback);
-
             });
 
         }
@@ -515,6 +508,39 @@
         }
 
     };
+    
+        /**
+     * Defined routes for Application
+     *
+     * @param {JSON}    options     OPTIONS: { css:[url: 'path'] and/or scripts:[url: 'path', async: true ] }
+     * @example         $.runspa.inject({ css:[url: 'path'], scripts:[url: 'path', async: true ]})
+     * @returns         void | error
+     */
+    RunSPA.inject = function (options) {
+
+        if (PageSetup.isEmpty(options)) {
+            throw new Error("RUNSPA INJECT: The argument option cannot be empty!");
+            return false;
+        }
+
+        if (!PageSetup.isJSON(options)) {
+            throw new Error("RunSPA Inject Invalid!");
+            return false;
+        }
+        
+        options.inject = true;
+
+        var opts = $.extend(true, {}, $.fn.runspa.defaults, settings, options);
+
+        if (PageSetup.isJSON(options.css)) {
+            PageSetup.css(options.css, opts);
+        }
+
+        if (PageSetup.isJSON(options.scripts)) {
+            PageSetup.js(options.scripts, opts);
+        }
+
+    };
 
 
     $.fn.runspa.defaults = {
@@ -523,6 +549,7 @@
         defaultPage: undefined,
         pageError: undefined,
         autoCreateRoute: false,
+        inject: false,
         method: 'GET',
         cache: false,
         async: false,

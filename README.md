@@ -1,4 +1,4 @@
-## RunSPA
+# [RunSPA](#runspa) ![bower][bower-image] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]
 
 > A simple jQuery Single Page Application Plugin 
 
@@ -104,8 +104,47 @@ $.runspa.route('Route Hash', {
 
 ## Events
 
+Load the page required
+
 ```javascript
 $.runspa.get(name, [options, function]);
+```
+
+Load files javascript or CSS
+
+```javascript
+$.runspa.inject({
+    css: [
+		{url: 'path/style1.css'},
+		{url: 'path/style2.css'},
+	],
+	scripts: [
+		{url: 'path/scripts1.js' /* async optional */},
+		{url: 'path/scripts2.js' /* async optional */}
+	]
+});
+```
+
+Load Files CSS
+
+```javascript
+$.runspa.inject({
+    css: [
+		{url: 'path/style1.css'},
+		{url: 'path/style2.css'},
+	]
+});
+```
+
+Load Files JavaScript
+
+```javascript
+$.runspa.inject({
+	scripts: [
+		{url: 'path/scripts1.js' /* [async=true] optional */},
+		{url: 'path/scripts2.js' /* [async=true] optional */}
+	]
+});
 ```
 
 ## Author
@@ -120,7 +159,10 @@ Please post issues and feature request here [Github issues](https://github.com/c
 
 [MIT](http://opensource.org/licenses/MIT) © 2018 [Carlos R F Júnior](http://www.lanx.com.br)
 
+[⬆ back to top](#runspa)
 
-
-
-[⬆ back to top](#table-of-contents)
+[bower-image]: https://badge.fury.io/bo/runspa.svg
+[npm-url]: https://npmjs.org/package/runspa
+[npm-image]: https://badge.fury.io/js/runspa.svg
+[travis-image]: https://travis-ci.org/carlosrfjunior/runspa.svg?branch=master
+[travis-url]: https://travis-ci.org/carlosrfjunior/runspa
