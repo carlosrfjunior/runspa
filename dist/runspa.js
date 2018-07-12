@@ -243,6 +243,7 @@
 
             script.type = 'text/javascript';
             script.async = file.async || options.async;
+            script.defer = file.defer || options.defer;
             script.src = file.url;
 
             script.setAttribute('class', prefixClass + ' ' + prefixLoading);
@@ -617,6 +618,7 @@
         method: 'GET',
         cache: false,
         async: false,
+        defer: false,
         data: undefined,
         dataType: 'html',
         extension: undefined,

@@ -84,7 +84,7 @@ $.runspa.route('[Route Hash]', {
 });
 ```
 
-- All Definitions Available
+- All available default settings
 
 ```javascript
 $.runspa({
@@ -95,7 +95,6 @@ $.runspa({
         autoCreateRoute: false,
         method: 'GET',
         cache: false,
-        async: false,
         data: undefined,
         dataType: 'html',
         extension: undefined,
@@ -136,8 +135,8 @@ $.runspa.get('Route Hash', {
 		{url: 'path/style2.css'},
 	],
 	scripts: [
-		{url: 'path/scripts1.js' /* async optional */},
-		{url: 'path/scripts2.js' /* async optional */}
+		{url: 'path/scripts1.js' /* [async:true, defer:true] optional */},
+		{url: 'path/scripts2.js' /* [async:true, defer:true] optional */}
 	],
 	beforeSend: function () {
 		/* Code */
@@ -172,8 +171,8 @@ $.runspa.inject({
 		{url: 'path/style2.css'},
 	],
 	scripts: [
-		{url: 'path/scripts1.js' /* async optional */},
-		{url: 'path/scripts2.js' /* async optional */}
+		{url: 'path/scripts1.js' /* [async:true, defer:true] optional */},
+		{url: 'path/scripts2.js' /* [async:true, defer:true] optional */}
 	]
 });
 ```
@@ -196,8 +195,8 @@ $.runspa.inject({
 ```javascript
 $.runspa.inject({
 	scripts: [
-		{url: 'path/scripts1.js' /* [async=true] optional */},
-		{url: 'path/scripts2.js' /* [async=true] optional */}
+		{url: 'path/scripts1.js' /* [async:true, defer:true] optional */},
+		{url: 'path/scripts2.js' /* [async:true, defer:true] optional */}
 	]
 });
 ```
@@ -209,8 +208,8 @@ $.runspa.inject({
 		{url: 'path/style2.css'},
 	],
 	scripts: [
-		{url: 'path/scripts1.js' /* [async=true] optional */},
-		{url: 'path/scripts2.js' /* [async=true] optional */}
+		{url: 'path/scripts1.js' /* [async:true, defer:true] optional */},
+		{url: 'path/scripts2.js' /* [async:true, defer:true] optional */}
 	]
 }, function(){
     // Your Code
