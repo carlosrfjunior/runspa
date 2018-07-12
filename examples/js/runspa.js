@@ -13,10 +13,10 @@
 (function ($) {
 
     "use strict";
-    
+
     var typeRef = {'CLICK': 1, 'LOAD': 2};
     var typeFile = {'JS': 1, 'CSS': 2};
-    
+
     var
             // Abstracting the HTML and event identifiers for easy rebranding
             runspa = 'runspa',
@@ -35,19 +35,19 @@
     }
 
     var PageSetup = {
-        
+
         /**
          * Define estado atual
          * 
          * @param {typeRef} $status {'CLICK': 1, 'LOAD': 2}
          * @returns {runspaL#13.PageSetup.referrer}
          */
-        referrer: function($status){
-            
-            if($status !== undefined){
+        referrer: function ($status) {
+
+            if ($status !== undefined) {
                 referrer = $status;
             }
-            
+
             return referrer;
         },
         load: function ($hash, options) {
@@ -166,8 +166,8 @@
 
         },
         removeAllFiles: function ($tagName, options) {
-            
-            if(options.inject){
+
+            if (options.inject) {
                 return false;
             }
 
@@ -184,12 +184,20 @@
             $('.' + prefixClass).remove();
 
         },
-        js: function (files, options, callback) {
-            
+        js: function (files, options, callback, callbackAsync) {
+
             PageSetup.removeAllFiles(typeFile.JS, options);
 
+            var sizeFiles = (files.length - 1);
+
             $.each(files, function (key, data) {
+
                 PageSetup._js(data, options, callback);
+
+                if ($.isFunction(callbackAsync) && key === sizeFiles) {
+                   PageSetup.async(callbackAsync);
+                }
+
             });
 
         },
@@ -220,7 +228,9 @@
             s.setAttribute(key, meta);
             s.setAttribute('class', prefix.replace('.', ''));
 
-            s.onload = callback;
+            if ($.isFunction(callback)) {
+                s.onload = callback;
+            }
 
             head.insertBefore(s, title);
 
@@ -235,8 +245,34 @@
             script.async = file.async || options.async;
             script.src = file.url;
 
-            script.setAttribute('class', prefixClass);
-            script.onload = callback;
+            script.setAttribute('class', prefixClass + ' ' + prefixLoading);
+
+            if (script.readyState) {  //IE
+                script.onreadystatechange = function () {
+                    if (script.readyState === "loaded" || script.readyState === "complete") {
+
+                        script.onreadystatechange = null;
+                        script.setAttribute('class', prefixClass);
+
+                        if ($.isFunction(callback)) {
+                            callback();
+                        }
+
+                    }
+                };
+            } else {  //Others
+                script.onload = function () {
+
+                    script.setAttribute('class', prefixClass);
+
+                    if ($.isFunction(callback)) {
+                        callback();
+                    }
+
+                };
+            }
+
+
 
             body.appendChild(script);
 
@@ -252,7 +288,9 @@
             s.setAttribute('href', file.url);
             s.setAttribute('class', prefixClass);
 
-            s.onload = callback;
+            if ($.isFunction(callback)) {
+                s.onload = callback;
+            }
 
             head.appendChild(s);
 
@@ -281,7 +319,7 @@
 
             $(pageClick).unbind('click').off('click').on('click', function (e) {
                 e.preventDefault();
-                
+
                 PageSetup.referrer(typeRef.CLICK);
 
                 var spaClass = '[data-spa-class="' + opts.id + '"]';
@@ -364,6 +402,26 @@
             $obj.click();
 
         },
+        async: function (callback) {
+
+            var callLoad = $(prefixLoading).length;
+
+            $(prefixLoading).each(function () {
+
+                callLoad = $(prefixLoading).length;
+
+                if (callLoad <= 1) {
+                    callback();
+                }
+
+            });
+
+            if (callLoad <= 1) {
+                callback();
+            }
+
+
+        },
         isEmpty: function (value, trim) {
             return value === undefined || value === null || value.length === 0 || (trim && $.trim(value) === '');
         },
@@ -407,7 +465,7 @@
     $(window).on('hashchange', function (e) {
         e.preventDefault();
     });
-    
+
     /**
      * Defined routes for Application
      *
@@ -508,8 +566,8 @@
         }
 
     };
-    
-        /**
+
+    /**
      * Defined routes for Application
      *
      * @param {JSON}        options     OPTIONS: { css:[url: 'path'] and/or scripts:[url: 'path', async: true ] }
@@ -529,7 +587,7 @@
             throw new Error("RunSPA Inject Invalid!");
             return false;
         }
-        
+
         options.inject = true;
 
         var opts = $.extend(true, {}, $.fn.runspa.defaults, settings, options);
@@ -540,12 +598,12 @@
 
         if (PageSetup.isJSON(options.scripts)) {
             if ($.isFunction(callback)) {
-                PageSetup.js(options.scripts, opts, callback);
-            }else{
+                PageSetup.js(options.scripts, opts, undefined, callback);
+            } else {
                 PageSetup.js(options.scripts, opts);
             }
         }
-        
+
     };
 
 

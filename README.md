@@ -23,8 +23,8 @@ Include files:
 
 ```
 dist/
-├── runspa.js      (72 KB)
-└── runspa.min.js  (65 KB)
+├── runspa.js      (80 KB)
+└── runspa.min.js  (68 KB)
 ```
 
 ```html
@@ -34,13 +34,53 @@ dist/
 
 ## Basic Use
 
+- HTML definitions
+
+```html
+<a href="#my/list" data-spa="my/list"></a> <!-- Definition menu or Button [Route Hash] -->
+<div id="[ID Main Container]"></div> <!-- Definition Main Container, all content html will been load here -->
+```
+
 - General Definitions
 
 ```javascript
 $.runspa({
-    id: 'ID Main Container',
+    id: '[ID Main Container]',
     defaultPage: 'Route Default',
     title: 'Title Default'
+});
+```
+
+- Routes Definitions
+
+```javascript
+$.runspa.route('[Route Hash]', {
+	title: 'Title Page',
+	path: 'client', /* Optional */
+	autoCreateRoute: true, /* Optional */
+	metaTag: { /* All Meta Tags HTML*/
+		'keywords': '...',
+		'description': '...'
+	},
+	css: [
+		{url: 'path/style1.css'},
+		{url: 'path/style2.css'},
+	],
+	scripts: [
+		{url: 'path/scripts1.js' /* async optional */},
+		{url: 'path/scripts2.js' /* async optional */}
+	],
+	beforeSend: function () {
+		/* Code */
+	},
+	success: function (e) {
+		/* Code */
+	},
+	error: function (e) {
+		/* Code */
+	}
+}, function (page) {
+	/* Code */
 });
 ```
 
@@ -71,10 +111,19 @@ $.runspa({
 });
 ```
 
-- Routes Definitions
+## Events
+
+- Load the page required
+
 
 ```javascript
-$.runspa.route('Route Hash', {
+$.runspa.get(name, [options, function]);
+```
+
+**Example:**
+
+```javascript
+$.runspa.get('Route Hash', {
 	title: 'Description Page',
 	path: 'client', /* Optional */
 	autoCreateRoute: true, /* Optional */
@@ -104,15 +153,17 @@ $.runspa.route('Route Hash', {
 });
 ```
 
-## Events
 
-Load the page required
+
+- Function load files script manual
 
 ```javascript
-$.runspa.get(name, [options, function]);
+$.runspa.inject(options, [function]);
 ```
 
-Load files javascript or CSS
+**Examples:**
+
+- Load files javascript or CSS
 
 ```javascript
 $.runspa.inject({
@@ -127,7 +178,8 @@ $.runspa.inject({
 });
 ```
 
-Load Files CSS
+- Load Files CSS
+
 
 ```javascript
 $.runspa.inject({
@@ -138,7 +190,8 @@ $.runspa.inject({
 });
 ```
 
-Load Files JavaScript
+- Load Files JavaScript
+
 
 ```javascript
 $.runspa.inject({
