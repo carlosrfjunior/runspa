@@ -1,4 +1,5 @@
-# [RunSPA](#runspa) ![bower][bower-image] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url]
+# [RunSPA](#runspa) 
+![bower][bower-image] [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![][jsdelivr-image]][jsdelivr-url] 
 
 > A simple jQuery Single Page Application Plugin 
 
@@ -14,6 +15,7 @@ Three quick start options are available:
 - Clone the repository: `git clone https://github.com/carlosrfjunior/runspa.git`.
 - Install with [NPM](https://www.npmjs.com/package/runspa): `npm install runspa`.
 - Install with [Bower](http://bower.io): `bower install runspa`.
+- Install with [Yarn](https://yarn.pm/runspa): `yarn add runspa`.
 
 ### Installation
 
@@ -166,3 +168,5 @@ Please post issues and feature request here [Github issues](https://github.com/c
 [npm-image]: https://badge.fury.io/js/runspa.svg
 [travis-image]: https://travis-ci.org/carlosrfjunior/runspa.svg?branch=master
 [travis-url]: https://travis-ci.org/carlosrfjunior/runspa
+[jsdelivr-image]: https://data.jsdelivr.com/v1/package/npm/runspa/badge
+[jsdelivr-url]: https://www.jsdelivr.com/package/npm/runspa
