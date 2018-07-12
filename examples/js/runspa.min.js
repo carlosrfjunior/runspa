@@ -1,5 +1,5 @@
 /*!
- * RunSPA v1.1.1-rc
+ * RunSPA v1.1.6
  * https://github.com/carlosrfjunior/runspa
  *
  * Author: Carlos R F Júnior
