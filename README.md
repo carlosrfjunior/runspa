@@ -149,6 +149,23 @@ $.runspa.inject({
 });
 ```
 
+```javascript
+$.runspa.inject({
+        css: [
+		{url: 'path/style1.css'},
+		{url: 'path/style2.css'},
+	],
+	scripts: [
+		{url: 'path/scripts1.js' /* [async=true] optional */},
+		{url: 'path/scripts2.js' /* [async=true] optional */}
+	]
+}, function(){
+    // Your Code
+});
+```
+
+
+
 ## Author
 
 [Carlos Júnior](https://github.com/carlosrfjunior)

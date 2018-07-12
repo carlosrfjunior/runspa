@@ -512,11 +512,13 @@
         /**
      * Defined routes for Application
      *
-     * @param {JSON}    options     OPTIONS: { css:[url: 'path'] and/or scripts:[url: 'path', async: true ] }
-     * @example         $.runspa.inject({ css:[url: 'path'], scripts:[url: 'path', async: true ]})
-     * @returns         void | error
+     * @param {JSON}        options     OPTIONS: { css:[url: 'path'] and/or scripts:[url: 'path', async: true ] }
+     * @param {function}    callback    OPTIONAL: Return functions
+     * @example             $.runspa.inject(files script)
+     * @example             $.runspa.inject(files script, [function])
+     * @returns             void | error
      */
-    RunSPA.inject = function (options) {
+    RunSPA.inject = function (options, callback) {
 
         if (PageSetup.isEmpty(options)) {
             throw new Error("RUNSPA INJECT: The argument option cannot be empty!");
@@ -537,9 +539,13 @@
         }
 
         if (PageSetup.isJSON(options.scripts)) {
-            PageSetup.js(options.scripts, opts);
+            if ($.isFunction(callback)) {
+                PageSetup.js(options.scripts, opts, callback);
+            }else{
+                PageSetup.js(options.scripts, opts);
+            }
         }
-
+        
     };
 
 
