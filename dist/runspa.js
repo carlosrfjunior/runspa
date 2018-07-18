@@ -188,6 +188,10 @@
 
             PageSetup.removeAllFiles(typeFile.JS, options);
 
+            if (files === undefined) {
+                return;
+            }
+
             var sizeFiles = (files.length - 1);
 
             $.each(files, function (key, data) {
@@ -195,7 +199,7 @@
                 PageSetup._js(data, options, callback);
 
                 if ($.isFunction(callbackAsync) && key === sizeFiles) {
-                   PageSetup.async(callbackAsync);
+                    PageSetup.async(callbackAsync);
                 }
 
             });
@@ -204,6 +208,10 @@
         css: function (files, options, callback) {
 
             PageSetup.removeAllFiles(typeFile.CSS, options);
+
+            if (files === undefined) {
+                return;
+            }
 
             $.each(files, function (key, data) {
                 PageSetup._css(data, options, callback);
