@@ -16,9 +16,8 @@
     </div>
 </div>
 
+<br />
 <footer class="footer">
-    <p>&copy; 2017 Carlos R F Júnior.</p>
+    <p>&copy; 2019 <a href="https://github.com/carlosrfjunior/runspa">Carlos R F Júnior.</a></p>
 </footer>
-
-</div> <!-- /container -->
 

@@ -1,5 +1,5 @@
 /*!
- * RunSPA v1.1.6
+ * RunSPA v1.1.7
  * https://github.com/carlosrfjunior/runspa
  *
  * Author: Carlos R F Júnior
@@ -65,7 +65,7 @@
             }
 
             if (options.prefix !== undefined) {
-                url += $hash + '/' + options.prefix;
+                url += options.prefix + $hash;
             } else {
                 url += $hash;
             }

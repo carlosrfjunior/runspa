@@ -21,3 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,<br
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN<br>
 THE SOFTWARE.<br>
 </div>
+
+<br />
+<footer class="footer">
+    <p>&copy; 2019 <a href="https://github.com/carlosrfjunior/runspa">Carlos R F Júnior.</a></p>
+</footer>
